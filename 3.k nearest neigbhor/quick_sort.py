@@ -2,8 +2,8 @@ def quick_sort_1(array, l, r):
 	if l < r:
 		q = partition(array, l ,r)
 		quick_sort_1(array, l, q - 1)
-		quick_sort_1(array, q+1, r)
-		
+		quick_sort_1(array, q + 1, r)
+		 
 
 def partition(array, l, r):
 	x = array[r]
