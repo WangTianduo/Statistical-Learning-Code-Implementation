@@ -1,7 +1,11 @@
 import numpy as np
 import time
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
+import sys
+sys.path.append('..')
+from datasets.get_data import get_dataset
+
+
+cancer_info = get_dataset('breast_cancer')
 
 def divide_group(min_value, max_value, x, gap_num):
 	'''
@@ -41,8 +45,8 @@ def get_distribution(train_x, train_y):
 	:param train_x: after discretization
 	:param train_y: original one
 	'''
-	feature_num = 30
-	class_num = 2
+	feature_num = cancer_info.feature_num
+	class_num = cancer_info.class_num
 	feature_value_split = 20
 	p_y = np.zeros((class_num, 1))
 	
@@ -77,8 +81,8 @@ def naive_bayes(p_y, p_xy, x):
 	:return: predicted label of x
 	'''
 	
-	feature_num = 30
-	class_num = 2
+	feature_num = cancer_info.feature_num
+	class_num = cancer_info.class_num
 	
 	P = [0] * class_num
 	
@@ -110,9 +114,7 @@ def test(p_y, p_xy, test_x, test_y):
 if __name__ == '__main__':
 	start = time.time()
 	
-	(x_arr, y_arr) = load_breast_cancer(return_X_y=True)
-	X_train, X_test, Y_train, Y_test = train_test_split(x_arr, y_arr, test_size=0.3)
-	
+	X_train, X_test, Y_train, Y_test = cancer_info.split()
 	discret_train_X = discretize(X_train, 20)
 	p_y, p_xy = get_distribution(discret_train_X, Y_train)
 	
