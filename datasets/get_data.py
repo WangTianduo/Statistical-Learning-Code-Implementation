@@ -13,6 +13,7 @@ class DataSetInfo:
 		self.class_num = self.get_class_num()
 		
 	def split(self, test_ratio=0.3):
+        # train_x, test_y, train_y, test_y
 		return train_test_split(self.x, self.y, test_size=0.3)
 		
 	def get_class_num(self):

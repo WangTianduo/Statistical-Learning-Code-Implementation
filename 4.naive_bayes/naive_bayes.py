@@ -90,10 +90,14 @@ def naive_bayes(p_y, p_xy, x):
 		
 		sum = 0
 		
+		# get the probability of each value of the feature
+		# since the log, multiply becomes addition
 		for j in range(feature_num):
 			sum += p_xy[i][j][x[j]]
 			
 		P[i] = sum + p_y[i]
+		
+		# same P_x for every sample, so no need to divide
 		
 	return P.index(max(P))
 	
