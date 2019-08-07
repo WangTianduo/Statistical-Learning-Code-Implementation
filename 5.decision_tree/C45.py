@@ -64,9 +64,9 @@ def cal_H_A_D(A, D_x):
     :param D_x: training set X 
     '''
 
-    result = 1
+    result = 0
 
-    total_entries = len(D_x)
+    total_entries = len(D_x) + 1
 
     feature_value_dict = dict()
 
