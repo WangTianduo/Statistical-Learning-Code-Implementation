@@ -64,7 +64,7 @@ def cal_H_A_D(A, D_x):
     :param D_x: training set X 
     '''
 
-    result = 0.001
+    result = 1
 
     total_entries = len(D_x)
 
@@ -184,11 +184,7 @@ def create_tree(*dataSet):
         treeDict[Ag][2] = create_tree(get_subdata_array(train_x, train_y, Ag, 2))
         treeDict[Ag][3] = create_tree(get_subdata_array(train_x, train_y, Ag, 3))
         treeDict[Ag][4] = create_tree(get_subdata_array(train_x, train_y, Ag, 4))
-        treeDict[Ag][5] = create_tree(get_subdata_array(train_x, train_y, Ag, 5))
-        treeDict[Ag][6] = create_tree(get_subdata_array(train_x, train_y, Ag, 6))
-        treeDict[Ag][7] = create_tree(get_subdata_array(train_x, train_y, Ag, 7))
-        treeDict[Ag][8] = create_tree(get_subdata_array(train_x, train_y, Ag, 8))
-        treeDict[Ag][9] = create_tree(get_subdata_array(train_x, train_y, Ag, 9))
+
 
         return treeDict
 
@@ -228,11 +224,11 @@ if __name__ == '__main__':
     cancer_set_info = get_dataset('breast_cancer')
     train_x, test_x, train_y, test_y = cancer_set_info.split()
 
-    train_x = discretize(train_x, 10)
+    train_x = discretize(train_x, 5)
     tree = create_tree((train_x, train_y))
 
     print('tree:{}'.format(tree))
-    test_x = discretize(test_x, 10)
+    test_x = discretize(test_x, 5)
     acc = test(test_x, test_y, tree)
     # acc = test(train_x, train_y, tree)
     print('accuracy is {}'.format(acc))
