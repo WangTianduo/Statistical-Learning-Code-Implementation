@@ -89,28 +89,21 @@ def get_best_feature(D_x, D_y):
     return max_feature, max_G_D_A
 
 
-def majorClass(labelArr):
+def majorClass(label_arr):
     '''
-    找到当前标签集中占数目最大的标签
-    :param labelArr: 标签集
-    :return: 最大的标签
+    get the major label in the given label set
+    :param label_arr: label set
+    :return: the major label
     '''
-    #建立字典，用于不同类别的标签技术
-    classDict = {}
-    #遍历所有标签
-    for i in range(len(labelArr)):
-        #当第一次遇到A标签时，字典内还没有A标签，这时候直接幅值加1是错误的，
-        #所以需要判断字典中是否有该键，没有则创建，有就直接自增
-        if labelArr[i] in classDict.keys():
-            # 若在字典中存在该标签，则直接加1
-            classDict[labelArr[i]] += 1
+    class_dict = {}
+    for i in range(len(label_arr)):
+        if label_arr[i] in class_dict.keys():
+            class_dict[label_arr[i]] += 1
         else:
-            #若无该标签，设初值为1，表示出现了1次了
-            classDict[labelArr[i]] = 1
-    #对字典依据值进行降序排序
-    classSort = sorted(classDict.items(), key=lambda x: x[1], reverse=True)
-    #返回最大一项的标签，即占数目最多的标签
-    return classSort[0][0]
+            class_dict[label_arr[i]] = 1
+    class_sort = sorted(class_dict.items(), key=lambda x: x[1], reverse=True)
+    
+    return class_sort[0][0]
 
 
 def get_subdata_array(train_x, train_y, A, a):
@@ -139,13 +132,13 @@ def create_tree(*dataSet):
     :return: ??
     '''
 
-    Epsilon = 0.1
+    Epsilon = 0.001
 
     train_x = dataSet[0][0]
     train_y = dataSet[0][1]
 
-    # print('train_x shape:{}'.format(train_x.shape))
-    # print('train_y shape:{}'.format(train_y.shape))
+    if len(train_x) == 0:
+        return 0
     print('start a node: ', len(train_x[0]), len(train_y))
 
     classDict = {i for i in train_y}
@@ -156,7 +149,6 @@ def create_tree(*dataSet):
         return train_y[0]
     else:
         Ag, EpsilonGet = get_best_feature(train_x, train_y)
-
         if EpsilonGet < Epsilon:
             return majorClass(train_y)
 
@@ -164,6 +156,8 @@ def create_tree(*dataSet):
 
         treeDict[Ag][0] = create_tree(get_subdata_array(train_x, train_y, Ag, 0))
         treeDict[Ag][1] = create_tree(get_subdata_array(train_x, train_y, Ag, 1))
+        treeDict[Ag][2] = create_tree(get_subdata_array(train_x, train_y, Ag, 2))
+        treeDict[Ag][3] = create_tree(get_subdata_array(train_x, train_y, Ag, 3))
 
         return treeDict
 
@@ -176,11 +170,10 @@ def predict(test_x, tree):
         if type(tree[key]).__name__ == 'dict':
             dataVal = test_x[key]
 
-            print(test_x)
             test_x = np.concatenate([test_x[0:key],test_x[key+1:]])
 
             tree = value[dataVal]
-            print(tree)
+            # print(tree)
 
             if type(tree).__name__ != 'dict':
                 return tree
@@ -204,12 +197,13 @@ if __name__ == '__main__':
     cancer_set_info = get_dataset('breast_cancer')
     train_x, test_x, train_y, test_y = cancer_set_info.split()
 
-    train_x = discretize(train_x, 2)
+    train_x = discretize(train_x, 4)
     tree = create_tree((train_x, train_y))
 
     print('tree:{}'.format(tree))
     test_x = discretize(test_x, 2)
     acc = test(test_x, test_y, tree)
+    # acc = test(train_x, train_y, tree)
     print('accuracy is {}'.format(acc))
 
     end = time.time()
